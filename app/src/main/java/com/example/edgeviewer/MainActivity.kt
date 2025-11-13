@@ -1,26 +1,12 @@
 package com.example.edgeviewer
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.os.Bundle
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import android.os.Bundle
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var glView: GLRenderView
-    private var cameraController: CameraController? = null
-
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            startCamera()
-        } else {
-            // permission denied - show message or close
-        }
-    }
+    private lateinit var cameraHandler: CameraHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,28 +14,24 @@ class MainActivity : AppCompatActivity() {
         glView = GLRenderView(this)
         setContentView(glView)
 
-        // Check camera permission
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-            != PackageManager.PERMISSION_GRANTED) {
-            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
-        } else {
-            startCamera()
+        cameraHandler = CameraHandler(this) { image ->
+            frameProcessor.process(image)
         }
-    }
 
-    private fun startCamera() {
-        cameraController = CameraController(this, glView, 640, 480)
-        cameraController?.start()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        cameraController?.stop()
-        glView.onPause()
+        frameProcessor = CameraFrameHandler { rgba, w, h ->
+            glView.updateFrame(rgba, w, h)
+        }
     }
 
     override fun onResume() {
         super.onResume()
         glView.onResume()
+        cameraHandler.start()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        cameraHandler.stop()
+        glView.onPause()
     }
 }
