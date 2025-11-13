@@ -1,18 +1,22 @@
 #include "processor.h"
 #include <android/log.h>
+#include <cstring>
 
-#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, "EdgeAI", __VA_ARGS__)
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, "EdgeProcessor", __VA_ARGS__)
 
 Processor::Processor() {
-    LOGI("Processor created");
+    LOGI("Processor ctor");
 }
 
 Processor::~Processor() {
-    LOGI("Processor destroyed");
+    LOGI("Processor dtor");
 }
 
-void Processor::processFrame(uint8_t* data, int width, int height) {
-    // Placeholder for edge processing
-    // Currently no-op
-    LOGI("Processing frame %dx%d", width, height);
+// input: pointer to Y-plane data with size width*height
+// out: pointer to single-channel output (width*height)
+void Processor::processFrame(uint8_t* input, uint8_t* out, int width, int height) {
+    int size = width * height;
+    // simple copy for now (Y-plane -> output)
+    memcpy(out, input, size);
+    // FUTURE: apply Canny/OpenCV here
 }
