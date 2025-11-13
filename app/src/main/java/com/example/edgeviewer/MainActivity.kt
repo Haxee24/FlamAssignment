@@ -1,33 +1,26 @@
 package com.example.edgeviewer
 
-import android.os.Bundle
-import android.view.TextureView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.edgeviewer.databinding.ActivityMainBinding
+import android.os.Bundle
 
-class MainActivity : AppCompatActivity(), TextureView.SurfaceTextureListener {
+class MainActivity : AppCompatActivity() {
 
-    private lateinit var bind: ActivityMainBinding
-    private var cameraController: CameraController? = null
+    private lateinit var glView: GLRenderView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        bind = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(bind.root)
-
-        bind.cameraTexture.surfaceTextureListener = this
+        glView = GLRenderView(this)
+        setContentView(glView)
     }
 
-    override fun onSurfaceTextureAvailable(surface: android.graphics.SurfaceTexture, width: Int, height: Int) {
-        cameraController = CameraController(this, surface)
-        cameraController?.start()
+    override fun onPause() {
+        super.onPause()
+        glView.onPause()
     }
 
-    override fun onSurfaceTextureSizeChanged(surface: android.graphics.SurfaceTexture, width: Int, height: Int) {}
-    override fun onSurfaceTextureDestroyed(surface: android.graphics.SurfaceTexture): Boolean {
-        cameraController?.stop()
-        return true
+    override fun onResume() {
+        super.onResume()
+        glView.onResume()
     }
-    override fun onSurfaceTextureUpdated(surface: android.graphics.SurfaceTexture) {}
 }
