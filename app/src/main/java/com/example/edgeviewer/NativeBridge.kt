@@ -1,14 +1,15 @@
 package com.example.edgeviewer
 
-class NativeBridge {
+object NativeBridge {
 
-    external fun initNative()
-    external fun processFrame(inputBuffer: java.nio.ByteBuffer, outputBuffer: java.nio.ByteBuffer, width: Int, height: Int)
-    external fun releaseNative()
-
-    companion object {
-        init {
-            System.loadLibrary("edge_native")
-        }
+    init {
+        System.loadLibrary("edgeprocessor")
     }
+
+    external fun processFrame(
+        yuvData: ByteArray,
+        width: Int,
+        height: Int,
+        outRGBA: ByteArray
+    )
 }
