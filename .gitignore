@@ -1,0 +1,22 @@
+# Android / Gradle
+.gradle/
+.local/
+.idea/
+build/
+captures/
+*.iml
+*.apk
+*.aar
+*.cxx/
+
+# NDK builds
+*/obj/
+*/libs/
+
+# Node / TypeScript
+node_modules/
+dist/
+*.log
+
+# macOS
+.DS_Store
